@@ -36,57 +36,64 @@ public class Lomente2_1 {
         Stack<String> braces = new Stack<>();
         
         int unitCount = 0;
+        int constantCount = 0;
         
         BufferedReader br = readFile(file_path);
         
         while ((line = br.readLine()) != null){
 //            System.out.println(line);
-            
-            
-            if (line.contains("for(") || line.contains("for (")){
-                
-                tokens = tokenizer(line);
-                
-                lb = extract(getLowerBound(tokens));
-                
-                up = getUpperBound(tokens);
-                increment = tokens.get(2).toString();
-
-                System.out.println("Lower Bound: " + lb);
-                System.out.println("Upper Bound: " + up);
-                System.out.println("Iterator: " + increment);
-            
-            }
-            
             if(line.contains("{"))
                 braces.push("{");
             else if(line.contains("}"))
                 braces.pop();
             
-            if(braces.empty() == false){
+            if(!braces.empty()){
+                if (line.contains("for(") || line.contains("for (")){
+
+                    tokens = tokenizer(line);
+                    
+
+                    lb = extract(getLowerBound(tokens));
+
+                    up = getUpperBound(tokens);
+                    increment = tokens.get(2).toString();
+
+                    System.out.println("Lower Bound: " + lb);
+                    System.out.println("Upper Bound: " + up);
+                    System.out.println("Iterator: " + increment);
+                    
+                    if(line.contains(",")){
+                        for (Object str : tokens){
+                            System.out.println(str.toString());
+                            String[] tmp = str.toString().split(",");
+                            constantCount += tmp.length;
+                        }
+                    }
+                    else{
+                        constantCount += 2;
+                    }
+
+                }
+                else if(line.contains("{"))
+                    braces.push("{");
+                else if(line.contains("}"))
+                    braces.pop();
+                
                 unitCount += countUnitTime(line);
+                
             }
-            else if(braces.empty()){
+            else if(braces.empty() && !line.isEmpty()){
+                unitCount -= constantCount-1;
                 System.out.println("Unit time: " + unitCount + "\n");
                 unitCount = 0;
+                constantCount = 0;
             }
             
         }
         
-//        br = readFile(file_path);
-////        line = br.readLine();
-//        int ctr = 0;
-//        while((line = br.readLine()) != null){
-////            tokens = forLoopTokenizer(line);
-//            if(line.contains("}") == false)
-//                ctr += countUnitTime(line);
-//            else if(line.contains("}")){
-//                System.out.println("Unit: " + ctr);
-//                ctr = 0;
-//            }
-//            
-//        }
-        
+    }
+    
+    public void formulate(String lower, String upper){
     }
     
     public static BufferedReader readFile(String file) throws FileNotFoundException{
@@ -129,7 +136,6 @@ public class Lomente2_1 {
             }
 
         }
-
         
         return tokens;
     }
