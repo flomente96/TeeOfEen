@@ -31,7 +31,9 @@ public class Lomente2_1 {
         String file_path = "file.in_b.txt";
         String line;
         ArrayList tokens;
-        String lb, up, increment;
+        String lb = "";
+        String up = "";
+        String increment = "";
         
         Stack<String> braces = new Stack<>();
         
@@ -64,7 +66,7 @@ public class Lomente2_1 {
                     
                     if(line.contains(",")){
                         for (Object str : tokens){
-                            System.out.println(str.toString());
+//                            System.out.println(str.toString());
                             String[] tmp = str.toString().split(",");
                             constantCount += tmp.length;
                         }
@@ -83,17 +85,32 @@ public class Lomente2_1 {
                 
             }
             else if(braces.empty() && !line.isEmpty()){
+                String equation = "";
+                
                 unitCount -= constantCount-1;
-                System.out.println("Unit time: " + unitCount + "\n");
+                System.out.println("Unit time: " + unitCount);
+                
+                if(unitCount > 1){
+                    equation = createEquation(lb, up, constantCount, unitCount);
+                    System.out.println("Equation: " + equation);
+                }
+                else
+                    System.out.println("\n");
+                
+                
+                
                 unitCount = 0;
                 constantCount = 0;
+                
             }
             
         }
         
     }
     
-    public void formulate(String lower, String upper){
+    public static String createEquation(String lower, String upper, int cons, int units){
+        return String.valueOf(units).concat("(").concat(upper).concat(")").concat("+").concat(String.valueOf(cons)).concat("\n");
+        
     }
     
     public static BufferedReader readFile(String file) throws FileNotFoundException{
@@ -202,7 +219,7 @@ public class Lomente2_1 {
         
         //Checks if the token is logarithmic or linear
         if (tokens.get(2).toString().contains("*=") || tokens.get(2).toString().contains("/="))
-            up = "Log of ".concat(up).concat(" base ").concat(extract(tokens.get(2).toString()));
+            up = "Log".concat("(").concat(extract(tokens.get(2).toString())).concat(")").concat(up);
         else if(tokens.get(2).toString().contains("+=") || tokens.get(2).toString().contains("-="))
             up = up.concat("/").concat(extract(tokens.get(2).toString()));
         
@@ -221,7 +238,8 @@ public class Lomente2_1 {
             
         }
         else if(token.contains("<") && token.contains("<=") ==false)
-            return token.substring(token.indexOf("<")+1, token.length()).concat("-1");
+            return token.substring(token.indexOf("<")+1, token.length());
+//            return token.substring(token.indexOf("<")+1, token.length()).concat("-1");
         
         return token.substring(token.indexOf("=")+1, token.length());
         
